@@ -17,7 +17,7 @@ pipeline {
                         sh """
                             git clone ${GIT_REPO} source
                             cd source
-                            git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/carmensyva/spring-petclinic.git
+                            git remote set-url origin https://${USERNAME}:${PASSWORD}@${GIT_REPO}
                         """
                     }
                 }
