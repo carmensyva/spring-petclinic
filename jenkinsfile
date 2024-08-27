@@ -1,0 +1,55 @@
+pipeline {
+    agent {
+        label 'skopeo'
+    }
+    environment {
+        SONARQUBE_URL = 'sonar.sonarqube.svc.cluster.local:9000'
+        SONARQUBE_TOKEN = credentials('sonar')
+        GIT_REPO = 'https://github.com/carmensyva/spring-petclinic.git'
+        BRANCH_NAME = 'main'
+    }
+    stages {
+        stage('Git Clone') {
+            steps {
+                script {
+                    sh "git config --global http.sslVerify false"
+                    withCredentials([usernamePassword(credentialsId: 'cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git clone https://\${USERNAME}:\${PASSWORD}@${GIT_REPO} source"
+                    }
+                }
+            }
+        }
+        stage('Build with Maven') {
+            steps {
+                dir('source') {
+                    script {
+                        sh "git fetch"
+                        sh "git switch ${BRANCH_NAME}"
+                        withMaven(maven: 'Maven 3') {
+                            sh 'mvn clean verify'
+                        }
+                    }
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                dir('source') {
+                    script {
+                        sh """
+                        mvn sonar:sonar \
+                            -Dsonar.host.url=${SONARQUBE_URL} \
+                            -Dsonar.login=${SONARQUBE_TOKEN} \
+                            -Dsonar.projectKey=test
+                        """
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
