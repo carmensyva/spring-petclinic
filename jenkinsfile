@@ -5,7 +5,7 @@ pipeline {
     environment {
         SONARQUBE_URL = 'sonar.sonarqube.svc.cluster.local:9000'
         SONARQUBE_TOKEN = credentials('sonar')
-        GIT_REPO = 'https://github.com/carmensyva/spring-petclinic.git'
+        GIT_REPO = 'github.com/carmensyva/spring-petclinic.git'
         BRANCH_NAME = 'main'
     }
     stages {
