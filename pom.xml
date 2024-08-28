@@ -171,17 +171,15 @@
           </execution>
         </executions>
       </plugin>
-      <plugins>
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.9.1.2184</version> <!-- Replace with the latest version -->
-          <configuration>
-            <!-- Reference the server ID in settings.xml -->
-            <serverId>sonar</serverId>
-          </configuration>
-        </plugin>
-      </plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.9.1.2184</version> <!-- Replace with the latest version -->
+        <configuration>
+          <!-- Reference the server ID in settings.xml -->
+          <serverId>sonar</serverId>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>io.spring.javaformat</groupId>
         <artifactId>spring-javaformat-maven-plugin</artifactId>
