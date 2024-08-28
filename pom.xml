@@ -35,12 +35,8 @@
     <nohttp-checkstyle.version>0.0.11</nohttp-checkstyle.version>
     <spring-format.version>0.0.41</spring-format.version>
 
-    <!-- SonarQube Server URL -->
     <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
-    <!-- SonarQube Project Key -->
-    <sonar.projectKey>test</sonar.projectKey>
-    <!-- Additional properties as needed -->
-    <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+    <sonar.login>${env.SONAR_TOKEN}</sonar.login>
 
   </properties>
 
@@ -174,7 +170,7 @@
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.9.1.2184</version> <!-- Replace with the latest version -->
+        <version>3.8.7</version> <!-- Replace with the latest version -->
         <configuration>
           <!-- Reference the server ID in settings.xml -->
           <serverId>sonar</serverId>
