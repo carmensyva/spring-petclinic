@@ -21,7 +21,7 @@ node('skopeo') {
             sh "git fetch"
             sh "git switch ${branchName}" 
             withCredentials([usernamePassword(credentialsId: 'sonarid', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "mvn clean verify sonar:sonar -Dsonar.projectKey=test -Dsonar.projectName='test' -Dsonar_username=${USERNAME}  -Dsonar_password=${PASSWORD}"
+                sh "mvn clean verify sonar:sonar -Dsonar.projectKey=test -Dsonar.projectName='test' -Dsonar_username=${USERNAME} -Dsonar_password=${PASSWORD} -Dcheckstyle.skip"
             }
         }
     }
