@@ -7,8 +7,10 @@
     <server>
       <!-- ID must match the server ID used in your pom.xml configuration -->
       <id>sonar</id>
-      <!-- SonarQube authentication token -->
-      <password>${sonar_token}</password>
+      <!-- SonarQube username -->
+      <username>${sonar_username}</username>
+      <!-- SonarQube password -->
+      <password>${sonar_password}</password>
     </server>
   </servers>
 </settings>
