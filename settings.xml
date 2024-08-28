@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  
+  <servers>
+    <server>
+      <!-- ID to match the server ID in the pom.xml or command line -->
+      <id>sonar</id>
+      <!-- SonarQube authentication token -->
+      <password>${sonar_token}</password>
+    </server>
+  </servers>
+
+  <profiles>
+    <profile>
+      <id>sonar</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- SonarQube server URL -->
+        <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
+        <!-- Login using the token; no username required -->
+        <sonar.login>${sonar_token}</sonar.login>
+        <!-- Additional properties -->
+        <sonar.projectKey>test</sonar.projectKey>
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
