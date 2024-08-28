@@ -1,4 +1,4 @@
-node('skepoe') {
+node('skepeo') {
 
     def appName="petclinic"
     def projectName="spring"
