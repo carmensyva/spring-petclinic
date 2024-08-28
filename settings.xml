@@ -4,13 +4,28 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   
   <servers>
+    <!-- Define the SonarQube server credentials -->
     <server>
-      <!-- ID must match the server ID used in your pom.xml configuration -->
+      <!-- This ID must match the serverId in your pom.xml -->
       <id>sonar</id>
-      <!-- SonarQube username -->
-      <username>${sonar_username}</username>
-      <!-- SonarQube password -->
-      <password>${sonar_password}</password>
+      <!-- Use the Maven property for authentication -->
+      <username>${sonar.login}</username>
+      <password></password>
     </server>
   </servers>
+  
+  <profiles>
+    <profile>
+      <id>sonar</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- Define the SonarQube server URL -->
+        <sonar.host.url>http://your-sonarqube-server:9000</sonar.host.url>
+        <!-- Refer to the server credentials by Maven property -->
+        <sonar.login>${sonar.login}</sonar.login>
+      </properties>
+    </profile>
+  </profiles>
 </settings>
