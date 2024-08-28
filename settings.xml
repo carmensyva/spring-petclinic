@@ -5,28 +5,10 @@
   
   <servers>
     <server>
-      <!-- ID to match the server ID in the pom.xml or command line -->
+      <!-- ID must match the server ID used in your pom.xml configuration -->
       <id>sonar</id>
       <!-- SonarQube authentication token -->
       <password>${sonar_token}</password>
     </server>
   </servers>
-
-  <profiles>
-    <profile>
-      <id>sonar</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <!-- SonarQube server URL -->
-        <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
-        <!-- Login using the token; no username required -->
-        <sonar.login>${sonar_token}</sonar.login>
-        <!-- Additional properties -->
-        <sonar.projectKey>test</sonar.projectKey>
-        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-      </properties>
-    </profile>
-  </profiles>
 </settings>
