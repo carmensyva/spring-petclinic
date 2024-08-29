@@ -2,8 +2,21 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-  
+  <mirrors>
+    <mirror>
+      <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+    </mirror>
+  </mirrors>
+	
   <servers>
+	<server>
+      <id>nexus</id>
+      <username>${nexus_username}</username>
+      <password>${nexus_password}</password>
+    </server>
+	  
     <!-- Define the SonarQube server credentials -->
     <server>
       <!-- This ID must match the serverId in your pom.xml -->
