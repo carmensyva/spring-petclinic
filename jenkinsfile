@@ -72,7 +72,9 @@ node('skopeo') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
              withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                sh "echo ${DOCKER_PASSWORD} | podman login --username ${DOCKER_USERNAME} --password-stdin docker.io"
+                sh """
+                    echo "\$DOCKER_PASSWORD" | podman login --username "\$DOCKER_USERNAME" --password-stdin docker.io
+                """
             }
             // Run Trivy to scan the built image and export results to an HTML file
             sh """
