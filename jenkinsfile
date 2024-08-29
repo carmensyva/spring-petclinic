@@ -73,7 +73,7 @@ node('skopeo') {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
             // Run Trivy to scan the built image and export results to an HTML file
             withCredentials([string(credentialsId: 'ocp-token', variable: 'OC_TOKEN')]) {
-              sh "oc login --token=${OC_TOKEN} --server=${ocp}"
+              sh "oc login --token=${OC_TOKEN} --server=${ocp} --insecure-skip-tls-verify"
               sh "oc registry login --skip-check"
             }
             sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
