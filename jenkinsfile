@@ -71,7 +71,11 @@ node('skopeo') {
     stage('Trivy Image Scan') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
-             withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh """
+                echo "147:100000:65536" | sudo tee -a /etc/subuid /etc/subgid
+                sudo podman system migrate
+            """
+            withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                 sh """
                     echo "\$DOCKER_PASSWORD" | podman login --username "\$DOCKER_USERNAME" --password-stdin docker.io
                 """
