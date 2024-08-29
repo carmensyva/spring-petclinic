@@ -69,10 +69,9 @@ node('skopeo') {
 
     stage('Update Deployment YAML') {
         dir("source") {
+            tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
             // Update the deployment YAML file with the new image tag
-            sh """
-            sed -i 's|image:.*|image: ${intRegistryDev}/${projectName}/${appName}:${tag}|g' ${deploymentYamlPath}
-            """
+            sh "sed -i 's|image:.*|image: ${intRegistryDev}/${projectName}/${appName}:${tag}|g' ${deploymentYamlPath}"
         }
     }
 
