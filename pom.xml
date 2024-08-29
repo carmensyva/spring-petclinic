@@ -40,6 +40,17 @@
 
   </properties>
 
+  <distributionManagement>
+      <repository>
+          <id>nexus</id>
+          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      </repository>
+      <snapshotRepository>
+          <id>nexus</id>
+          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <!-- Spring and Spring Boot dependencies -->
     <dependency>
@@ -297,6 +308,13 @@
   </licenses>
 
   <repositories>
+      <repository>
+          <id>nexus</id>
+          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      </repository>
+  </repositories>
+  
+  <!-- <repositories>
     <repository>
       <id>spring-snapshots</id>
       <name>Spring Snapshots</name>
@@ -332,7 +350,7 @@
         <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories> -->
 
   <profiles>
     <profile>
