@@ -6,8 +6,8 @@ node('skopeo') {
     def branchName="main"
 
     def intRegistryDev="default-route-openshift-image-registry.apps.dev.mibocp.co.id"
-
     def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
+    def hostedRepoUrl = "http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-hosted/"
 
     stage ('Git Clone') {
         sh "git config --global http.sslVerify false"
@@ -26,12 +26,14 @@ node('skopeo') {
         }
     }
 
+    stage ('
+
     stage ('App Build') {
         dir("source") {
             sh "git fetch"
             sh "git switch ${branchName}" 
             withCredentials([usernamePassword(credentialsId: 'nexusid', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"
+                sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -DaltDeploymentRepository=nexus::default::${hostedRepoUrl} -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"
             }
         }
     }
