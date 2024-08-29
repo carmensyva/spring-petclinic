@@ -30,8 +30,8 @@ node('skopeo') {
         dir("source") {
             sh "git fetch"
             sh "git switch ${branchName}" 
-            withCredentials([usernamePassword(credentialsId: 'nexusid', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Dnexus_username=${USERNAME} -Dnexus_password=${PASSWORD}"
+            withCredentials([usernamePassword(credentialsId: 'nexusid', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Dnexus.username=${NEXUS_USERNAME} -Dnexus.password=${NEXUS_PASSWORD}"
             }
         }
     }
