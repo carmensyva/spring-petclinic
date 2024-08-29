@@ -38,15 +38,6 @@ node('skopeo') {
 
     stage('App Push') {
         dir("source") {
-            // Check if the OpenShift project exists, and create it if it does not
-            def projectExists = sh(script: "oc get project ${projectName} --no-headers -o custom-columns=NAME:.metadata.name || echo not_found", returnStdout: true).trim()
-            if (projectExists == "not_found") {
-                echo "Project ${projectName} not found. Creating project..."
-                sh "oc new-project ${projectName}"
-            } else {
-                echo "Project ${projectName} already exists."
-            }
-
             // Prepare build directory and copy necessary files
             sh "mkdir -p build-folder/target/ build-folder/apps/"
             sh "cp dockerfile build-folder/Dockerfile"
@@ -61,6 +52,16 @@ node('skopeo') {
 
             // Start the build and tag the image
             sh "oc start-build ${appName} --from-dir=build-folder/. --follow --wait"
+
+            // Check if the OpenShift project exists, and create it if it does not
+            def projectExists = sh(script: "oc get project ${projectName} --no-headers -o custom-columns=NAME:.metadata.name || echo not_found", returnStdout: true).trim()
+            if (projectExists == "not_found") {
+                echo "Project ${projectName} not found. Creating project..."
+                sh "oc new-project ${projectName}"
+            } else {
+                echo "Project ${projectName} already exists."
+            }
+
             sh "oc tag cicd/${appName}:latest ${projectName}/${appName}:${tag}"
 
             // Login to the OpenShift registry
