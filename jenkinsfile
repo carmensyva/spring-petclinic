@@ -76,7 +76,6 @@ node('skopeo') {
             sh """
             sed -i 's|image:.*|image: ${intRegistryDev}/${projectName}/${appName}:${tag}|g' ${deploymentYamlPath}
             """
-            }
         }
     }
 
