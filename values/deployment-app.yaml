@@ -41,6 +41,7 @@ spec:
         volumeMounts:
         - name: tz-config
           mountPath: /etc/localtime
+      serviceAccount: petclinic
       volumes:
         - name: tz-config
           hostPath:
