@@ -72,7 +72,7 @@ node('skopeo') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
             // Run Trivy to scan the built image and export results to an HTML file
-            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
+            sh "trivy image --remote --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
         }
     }
 
