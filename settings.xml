@@ -38,7 +38,7 @@
         <!-- Define the SonarQube server URL -->
         <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
         <!-- Refer to the server credentials by Maven property -->
-        <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+        <sonar.login>${sonar.login}</sonar.login>
       </properties>
     </profile>
   </profiles>
