@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: petclinic
+  namespace: spring
+spec:
+  type: LoadBalancer
+  selector:
+    app: petclinic
+  ports:
+  - protocol: TCP
+    port: 8080
