@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petclinic-db
+  template:
+    metadata:
+      labels:
+        app: petclinic-db
+    spec:
+      securityContext:
+        fsGroup: 999   # Typical group ID for the postgres user
+        runAsUser: 999
+      containers:
+        - name: postgres
+          image: postgres:16.3
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "petclinic"
+            - name: POSTGRES_USER
+              value: "petclinic"
+            - name: POSTGRES_DB
+              value: "petclinic"
+          volumeMounts:
+            - name: petclinic-db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: petclinic-db-storage
+          persistentVolumeClaim:
+            claimName: petclinic-db-pvc
