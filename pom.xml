@@ -43,11 +43,11 @@
   <distributionManagement>
     <repository>
       <id>nexus</id>
-      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-nexus/</url>
     </repository>
     <snapshotRepository>
       <id>nexus</id>
-      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-nexus/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -310,7 +310,7 @@
   <repositories>
     <repository>
       <id>nexus</id>
-      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-nexus/</url>
     </repository>
   </repositories>
   
