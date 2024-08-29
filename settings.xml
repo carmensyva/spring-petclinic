@@ -24,7 +24,7 @@
     <mirror>
       <id>nexus</id>
       <mirrorOf>*</mirrorOf>
-      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-nexus/</url>
     </mirror>
   </mirrors>
   
