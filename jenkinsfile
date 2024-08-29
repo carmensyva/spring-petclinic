@@ -7,7 +7,7 @@ node('skopeo') {
     def deploymentYamlPath = "values/deployment-app.yaml"
 
     def intRegistryDev="image-registry.openshift-image-registry.svc:5000"
-    def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
+    def ocp="https://api.dev.mibocp.co.id:6443"
     def hostedRepoUrl = "http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-hosted/"
     def trivyReportPath = "trivy-report.html"
 
@@ -72,6 +72,10 @@ node('skopeo') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
             // Run Trivy to scan the built image and export results to an HTML file
+            withCredentials([string(credentialsId: 'ocp-token', variable: 'OC_TOKEN')]) {
+              sh "oc login --token=${OC_TOKEN} --server=${ocp}"
+              sh "oc registry login --skip-check"
+            }
             sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
         }
     }
