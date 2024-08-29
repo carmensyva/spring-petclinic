@@ -78,6 +78,8 @@ node('skopeo') {
     stage('Commit and Push Changes') {
         dir("source") {
             withCredentials([usernamePassword(credentialsId: 'cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh "git config user.email 'gading.iantrisna1@gmail.com'"
+                sh "git config user.name 'carmensyva'"
                 sh "git add ${deploymentYamlPath}"
                 sh "git commit -m 'Update deployment YAML with new image tag ${tag}'"
                 sh "git push https://${USERNAME}:${PASSWORD}@${repoUrl} ${branchName}"
