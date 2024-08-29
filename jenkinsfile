@@ -9,6 +9,7 @@ node('skopeo') {
     def intRegistryDev="image-registry.openshift-image-registry.svc:5000"
     def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
     def hostedRepoUrl = "http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-hosted/"
+    def trivyReportPath = "trivy-report.html"
 
     stage ('Git Clone') {
         sh "git config --global http.sslVerify false"
