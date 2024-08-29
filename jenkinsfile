@@ -67,6 +67,27 @@ node('skopeo') {
         }
     }
 
+    stage('Trivy Image Scan') {
+        dir("source") {
+            // Run Trivy to scan the built image and export results to an HTML file
+            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL ${intRegistryDev}/${projectName}/${appName}:${tag}"
+        }
+    }
+
+    stage('Publish Trivy Report') {
+        dir("source") {
+            // Publish the HTML report in Jenkins
+            publishHTML(target: [
+                reportName: 'Trivy Scan',
+                reportDir: '.',
+                reportFiles: trivyReportPath,
+                keepAll: true,
+                allowMissing: false,
+                alwaysLinkToLastBuild: true
+            ])
+        }
+    }
+
     stage('Update Deployment YAML') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
