@@ -35,103 +35,36 @@ node('skopeo') {
             }
         }
     }
+
+    stage('App Push') {
+        dir("source") {
+            // Check if the OpenShift project exists, and create it if it does not
+            def projectExists = sh(script: "oc get project ${projectName} --no-headers -o custom-columns=NAME:.metadata.name || echo not_found", returnStdout: true).trim()
+            if (projectExists == "not_found") {
+                echo "Project ${projectName} not found. Creating project..."
+                sh "oc new-project ${projectName}"
+            } else {
+                echo "Project ${projectName} already exists."
+            }
+
+            // Prepare build directory and copy necessary files
+            sh "mkdir -p build-folder/target/ build-folder/apps/"
+            sh "cp dockerfile build-folder/Dockerfile"
+            sh "cp target/*.jar build-folder/target/"
+
+            // Get the current git commit hash
+            def tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
+            def tokenLocal = sh(script: 'oc whoami -t', returnStdout: true).trim()
+
+            // Create new build or update existing build configuration
+            sh "cat build-folder/Dockerfile | oc new-build -D - --name ${appName} || true"
+
+            // Start the build and tag the image
+            sh "oc start-build ${appName} --from-dir=build-folder/. --follow --wait"
+            sh "oc tag cicd/${appName}:latest ${projectName}/${appName}:${tag}"
+
+            // Login to the OpenShift registry
+            sh "oc registry login --skip-check"
+        }
+    }
 }
-    // stage ('App Build') {
-    //     dir("source") {
-    //         sh "git fetch"
-    //         sh "git switch ${branchName}" 
-    //         sh "mvn clean deploy -Dmaven.test.skip=true -s settings.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"
-    //     }
-    // }
-
-    // stage ('App Push') {
-    //     dir("source") {
-    //         sh "mkdir -p build-folder/target/ build-folder/apps/ "
-    //         sh "cp ocp.Dockerfile build-folder/Dockerfile"
-    //         sh "cp target/*.war build-folder/target/"
-
-    //         def tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim();
-    //         def tokenLocal = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            
-    //         sh "cat build-folder/Dockerfile | oc new-build -D - --name ${appName} || true"
-    //         sh "oc start-build ${appName} --from-dir=build-folder/. --follow --wait "
-    //         //sleep(time:600,unit:"SECONDS")
-    //         //NEW SECTION BELOW//
-    //         sh "oc tag cicd4/${appName}:latest ${projectName}/${appName}:${tag} "
-            
-    //         sh "oc registry login --skip-check"
-            
-    //         //QUAY FORMAT <registry>/djbc/<namespace>_<deployment_name>
-    //         withCredentials([usernamePassword(credentialsId: 'quay-dc-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-    //             sh "skopeo copy --remove-signatures --src-creds=jenkins:${tokenLocal} --src-tls-verify=false docker://${intRegistryDev}/${projectName}/${appName}:${tag} docker://${extRegistryQuayDC}/djbc/${projectName}_${appName}:${tag} --dest-creds \${USERNAME}:\${PASSWORD} --dest-tls-verify=false"
-    //             sh "oc tag cicd4/${appName}:latest ${projectName}/${appName}:latest "
-    //             sh "skopeo copy --remove-signatures --src-creds=jenkins:${tokenLocal} --src-tls-verify=false docker://${intRegistryDev}/${projectName}/${appName}:latest docker://${extRegistryQuayDC}/djbc/${projectName}_${appName}:latest --dest-creds \${USERNAME}:\${PASSWORD} --dest-tls-verify=false"
-    //         }
-
-    //         withCredentials([usernamePassword(credentialsId: 'quay-drc-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-    //             sh "skopeo copy --remove-signatures --src-creds=jenkins:${tokenLocal} --src-tls-verify=false docker://${intRegistryDev}/${projectName}/${appName}:${tag} docker://${extRegistryQuayDRC}/djbc/${projectName}_${appName}:${tag} --dest-creds \${USERNAME}:\${PASSWORD} --dest-tls-verify=false"
-    //             sh "oc tag cicd4/${appName}:latest ${projectName}/${appName}:latest "
-    //             sh "skopeo copy --remove-signatures --src-creds=jenkins:${tokenLocal} --src-tls-verify=false docker://${intRegistryDev}/${projectName}/${appName}:latest docker://${extRegistryQuayDRC}/djbc/${projectName}_${appName}:latest --dest-creds \${USERNAME}:\${PASSWORD} --dest-tls-verify=false"
-    //         }
-
-    //         withCredentials([usernamePassword(credentialsId: 'harbor-ocp-cerds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-    //             sh "skopeo copy docker://${intRegistryDev}/${projectName}/${appName}:${tag} docker://${extRegistryHrbrDC}/ocp-staging/${projectName}_${appName}-stag:${tag} --dest-creds \${USERNAME}:\${PASSWORD} --src-tls-verify=false --dest-tls-verify=false"
-    //             sh "oc tag cicd4/${appName}:latest ${projectName}/${appName}:latest "
-    //             sh "skopeo copy docker://${intRegistryDev}/${projectName}/${appName}:latest docker://${extRegistryHrbrDC}/ocp-staging/${projectName}_${appName}_stag:latest --dest-creds \${USERNAME}:\${PASSWORD} --src-tls-verify=false --dest-tls-verify=false"
-    //         }
-
-    //         withCredentials([usernamePassword(credentialsId: 'harbor-ocp-cerds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-    //             sh "skopeo copy docker://${intRegistryDev}/${projectName}/${appName}:${tag} docker://${extRegistryHrbrDRC}/ocp-staging/${projectName}_${appName}-stag:${tag} --dest-creds \${USERNAME}:\${PASSWORD} --src-tls-verify=false --dest-tls-verify=false"
-    //             sh "oc tag cicd4/${appName}:latest ${projectName}/${appName}:latest "
-    //             sh "skopeo copy docker://${intRegistryDev}/${projectName}/${appName}:latest docker://${extRegistryHrbrDRC}/ocp-staging/${projectName}_${appName}-stag:latest --dest-creds \${USERNAME}:\${PASSWORD} --src-tls-verify=false --dest-tls-verify=false"
-    //         }
-    //     }
-    // }
-
-    // stage('App Deploy') {
-    //     parallel(
-    //         stage('App Deploy to DEV DC') {
-    //             steps {
-    //                 script {
-    //                     dir("source") {
-    //                         sh "sed 's,\\\$REGISTRY/\\\$HARBOR_NAMESPACE/\\\$APP_NAME:\\\$BUILD_NUMBER,${extRegistryQuayDC}/djbc/${projectName}_${appName}:latest,g' kubernetes_dcdev-quay.yaml > kubernetes-ocp-quay.yaml"
-    //                         sh "oc apply -f kubernetes-ocp-quay.yaml -n ${projectName}"
-    //                         sh "oc set triggers deployment/${appName} -c ${appName} -n ${projectName} || true "
-    //                         sh "oc rollout restart deployment/${appName} -n ${projectName}"
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         stage('App Deploy to Stagging DC Tanzu') {
-    //             steps {
-    //                 script {
-    //                     dir("source") {
-    //                         withCredentials([file(credentialsId: 'DC-STAGGING', variable: 'KUBE_CONFIG')]) {
-    //                             sh "sed 's,\\\$REGISTRY/\\\$HARBOR_NAMESPACE/\\\$APP_NAME:\\\$BUILD_NUMBER,${extRegistryHrbrDC}/ocp-staging/${projectName}_${appName}-stag:latest,g' kubernetes_dcdev-quay.yaml > kubernetes-ocp-quay.yaml"
-    //                             sh "kubectl --kubeconfig=\$KUBE_CONFIG apply -f kubernetes-ocp-quay.yaml -n ${projectName}"
-    //                             sh "kubectl set image deployment/${appName} ${appName}=${extRegistryHrbrDC}/ocp-staging/${projectName}_${appName}-stag:latest -n ${projectName} || true "
-    //                             sh "kubectl rollout restart deployment/${appName} -n ${projectName}"
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         stage('App Deploy to Stagging DRC Tanzu') {
-    //             steps {
-    //                 script {
-    //                     dir("source") {
-    //                         withCredentials([file(credentialsId: 'DRC-STAGGING', variable: 'KUBE_CONFIG')]) {
-    //                             sh "sed 's,\\\$REGISTRY/\\\$HARBOR_NAMESPACE/\\\$APP_NAME:\\\$BUILD_NUMBER,${extRegistryHrbrDRC}/ocp-staging/${projectName}_${appName}-stag:latest,g' kubernetes_dcdev-quay.yaml > kubernetes-ocp-quay.yaml"
-    //                             sh "kubectl --kubeconfig=\$KUBE_CONFIG apply -f kubernetes-ocp-quay.yaml -n ${projectName}"
-    //                             sh "kubectl set image deployment/${appName} ${appName}=${extRegistryHrbrDRC}/ocp-staging/${projectName}_${appName}-stag:latest -n ${projectName} || true "
-    //                             sh "kubectl rollout restart deployment/${appName} -n ${projectName}"
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     )
-    // }
-
