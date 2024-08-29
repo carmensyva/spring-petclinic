@@ -12,6 +12,9 @@ spec:
       labels:
         app: petclinic-db
     spec:
+      securityContext:
+        fsGroup: 999   # Typical group ID for the postgres user
+        runAsUser: 999
       containers:
         - name: postgres
           image: postgres:16.3
