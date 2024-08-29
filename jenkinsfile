@@ -65,7 +65,7 @@ node('skopeo') {
             sh "oc tag cicd/${appName}:latest ${projectName}/${appName}:${tag}"
 
             // Login to the OpenShift registry
-            sh "oc registry login --skip-check"
+            sh "sudo oc registry login --skip-check"
         }
     }
 }
