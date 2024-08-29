@@ -76,12 +76,16 @@ node('skopeo') {
             sh "mkdir -p /tmp/run"
 
             withCredentials([string(credentialsId: 'ocp-token', variable: 'OC_TOKEN')]) {
-              sh "oc login --token=${OC_TOKEN} --server=${ocp} --insecure-skip-tls-verify"
-              sh "oc registry login --skip-check"
+                sh """
+                    # Authenticate with OpenShift
+                    oc login --token=$OC_TOKEN --server=${ocp} --insecure-skip-tls-verify
+                    # Log in to the OpenShift internal registry
+                    oc registry login --skip-check
+                """
             }
 
             // Run Trivy to scan the built image and export results to an HTML file
-            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
+            sh "trivy client --remote http://localhost:4954 --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
         }
     }
 
