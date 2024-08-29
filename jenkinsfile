@@ -4,6 +4,7 @@ node('skopeo') {
     def projectName="spring"
     def repoUrl="github.com/carmensyva/spring-petclinic.git"
     def branchName="main"
+    def deploymentYamlPath = "values/deployment.yaml"
 
     def intRegistryDev="default-route-openshift-image-registry.apps.dev.mibocp.co.id"
     def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
@@ -54,18 +55,38 @@ node('skopeo') {
             sh "oc start-build ${appName} --from-dir=build-folder/. --follow --wait"
 
             // Check if the OpenShift project exists, and create it if it does not
-            def projectExists = sh(script: "oc get project ${projectName} --no-headers -o custom-columns=NAME:.metadata.name || echo not_found", returnStdout: true).trim()
-            if (projectExists == "not_found") {
-                echo "Project ${projectName} not found. Creating project..."
-                sh "oc new-project ${projectName}"
-            } else {
-                echo "Project ${projectName} already exists."
-            }
+            // def projectExists = sh(script: "oc get project ${projectName} --no-headers -o custom-columns=NAME:.metadata.name || echo not_found", returnStdout: true).trim()
+            // if (projectExists == "not_found") {
+            //     echo "Project ${projectName} not found. Creating project..."
+            //     sh "oc new-project ${projectName}"
+            // } else {
+            //     echo "Project ${projectName} already exists."
+            // }
 
             sh "oc tag cicd/${appName}:latest ${projectName}/${appName}:${tag}"
 
             // Login to the OpenShift registry
             sh "sudo oc registry login --skip-check"
+        }
+    }
+
+    stage('Update Deployment YAML') {
+        dir("source") {
+            // Update the deployment YAML file with the new image tag
+            sh """
+            sed -i 's|image:.*|image: ${intRegistryDev}/${projectName}/${appName}:${tag}|g' ${deploymentYamlPath}
+            """
+            }
+        }
+    }
+
+    stage('Commit and Push Changes') {
+        dir("source") {
+            withCredentials([usernamePassword(credentialsId: 'cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh "git add ${deploymentYamlPath}"
+                sh "git commit -m 'Update deployment YAML with new image tag ${tag}'"
+                sh "git push https://${USERNAME}:${PASSWORD}@${repoUrl} ${branchName}"
+            }
         }
     }
 }
