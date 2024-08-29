@@ -36,7 +36,7 @@
     <spring-format.version>0.0.41</spring-format.version>
 
     <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
-    <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
 
   </properties>
 
