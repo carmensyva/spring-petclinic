@@ -17,7 +17,7 @@ spec:
         runAsUser: 999
       containers:
         - name: postgres
-          image: postgres:16.3
+          image: default-route-openshift-image-registry.apps.dev.mibocp.co.id/spring/petclinic:efc03a56
           ports:
             - containerPort: 5432
           env:
@@ -62,7 +62,7 @@ spec:
     spec:
       containers:
       - name: petclinic
-        image: $REGISTRY/$HARBOR_NAMESPACE/$APP_NAME:$BUILD_NUMBER
+        image: default-route-openshift-image-registry.apps.dev.mibocp.co.id/spring/petclinic:efc03a56
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
