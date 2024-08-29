@@ -26,7 +26,7 @@ node('skopeo') {
         }
     }
 
-    stage ('App Build with Nexus') {
+    stage ('App Build') {
         dir("source") {
             sh "git fetch"
             sh "git switch ${branchName}" 
