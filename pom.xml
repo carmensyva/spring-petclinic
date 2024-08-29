@@ -41,14 +41,14 @@
   </properties>
 
   <distributionManagement>
-      <repository>
-          <id>nexus</id>
-          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
-      </repository>
-      <snapshotRepository>
-          <id>nexus</id>
-          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
-      </snapshotRepository>
+    <repository>
+      <id>nexus</id>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <dependencies>
@@ -308,10 +308,10 @@
   </licenses>
 
   <repositories>
-      <repository>
-          <id>nexus</id>
-          <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
-      </repository>
+    <repository>
+      <id>nexus</id>
+      <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven/</url>
+    </repository>
   </repositories>
   
   <!-- <repositories>
