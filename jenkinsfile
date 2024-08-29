@@ -6,7 +6,7 @@ node('skopeo') {
     def branchName="main"
     def deploymentYamlPath = "values/deployment.yaml"
 
-    def intRegistryDev="default-route-openshift-image-registry.apps.dev.mibocp.co.id"
+    def intRegistryDev="image-registry.openshift-image-registry.svc:5000"
     def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
     def hostedRepoUrl = "http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-hosted/"
 
