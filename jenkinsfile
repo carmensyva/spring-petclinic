@@ -4,7 +4,7 @@ node('skopeo') {
     def projectName="spring"
     def repoUrl="github.com/carmensyva/spring-petclinic.git"
     def branchName="main"
-    def deploymentYamlPath = "values/deployment.yaml"
+    def deploymentYamlPath = "values/deployment-app.yaml"
 
     def intRegistryDev="image-registry.openshift-image-registry.svc:5000"
     def ocpDRCDev="https://api.dev.mibocp.co.id:6443"
