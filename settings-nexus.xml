@@ -9,15 +9,6 @@
       <username>${nexus_username}</username>
       <password>${nexus_password}</password>
     </server>
-	  
-    <!-- Define the SonarQube server credentials -->
-    <server>
-      <!-- This ID must match the serverId in your pom.xml -->
-      <id>sonar</id>
-      <!-- Use the Maven property for authentication -->
-      <username>${sonar.login}</username>
-      <password></password>
-    </server>
   </servers>
 	
   <mirrors>
@@ -27,19 +18,4 @@
       <url>http://nexus-service.nexus.svc.cluster.local:8081/repository/mib-maven-nexus/</url>
     </mirror>
   </mirrors>
-  
-  <profiles>
-    <profile>
-      <id>sonar</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <!-- Define the SonarQube server URL -->
-        <sonar.host.url>http://sonar.sonarqube.svc.cluster.local:9000</sonar.host.url>
-        <!-- Refer to the server credentials by Maven property -->
-        <sonar.login>${sonar.login}</sonar.login>
-      </properties>
-    </profile>
-  </profiles>
 </settings>
