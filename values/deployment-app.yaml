@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: petclinic
-        image: default-route-openshift-image-registry.apps.dev.mibocp.co.id/spring/petclinic:efc03a56
+        image: image-registry.openshift-image-registry.svc:5000/spring/petclinic:785ce7b3
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
