@@ -1,1 +1,37 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+  namespace: spring
+  labels:
+    app: petclinic
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0%
+      maxUnavailable: 25%
+  minReadySeconds: 5
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: petclinic
+  template:
+    metadata:
+      labels:
+        app: petclinic
+    spec:
+      containers:
+      - name: petclinic
+        image: $REGISTRY/$HARBOR_NAMESPACE/$APP_NAME:$BUILD_NUMBER
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: tz-config
+          mountPath: /etc/localtime
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Jakarta
