@@ -30,6 +30,7 @@ spec:
           volumeMounts:
             - name: petclinic-db-storage
               mountPath: /var/lib/postgresql/data
+      serviceAccount: db
       volumes:
         - name: petclinic-db-storage
           persistentVolumeClaim:
