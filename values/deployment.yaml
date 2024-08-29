@@ -1,41 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: petclinic-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: petclinic-db
   template:
     metadata:
       labels:
-        app: mysql
+        app: petclinic-db
     spec:
       containers:
-        - name: mysql
-          image: mysql:8.4
+        - name: postgres
+          image: postgres:16.3
           ports:
-            - containerPort: 3306
+            - containerPort: 5432
           env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: ""
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "true"
-            - name: MYSQL_USER
+            - name: POSTGRES_PASSWORD
               value: "petclinic"
-            - name: MYSQL_PASSWORD
+            - name: POSTGRES_USER
               value: "petclinic"
-            - name: MYSQL_DATABASE
+            - name: POSTGRES_DB
               value: "petclinic"
           volumeMounts:
-            - name: mysql-config
-              mountPath: /etc/mysql/conf.d
-              readOnly: true
+            - name: petclinic-db-storage
+              mountPath: /var/lib/postgresql/data
       volumes:
-        - name: mysql-config
-          configMap:
-            name: mysql-config
+        - name: petclinic-db-storage
+          persistentVolumeClaim:
+            claimName: petclinic-db-pvc
             
 ---
 apiVersion: apps/v1
@@ -68,6 +63,16 @@ spec:
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
+        env:
+        # PostgreSQL environment variables
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://petclinic-db:5432/petclinic
+        - name: SPRING_DATASOURCE_USERNAME
+          value: petclinic
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: petclinic
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          value: org.postgresql.Driver
         volumeMounts:
         - name: tz-config
           mountPath: /etc/localtime
