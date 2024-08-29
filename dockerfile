@@ -6,4 +6,4 @@ ENV TZ="Asia/Jakarta"
 RUN date
 
 EXPOSE 8080
-CMD ["java","-Xms256m","-Xmx512m","-jar", "-Dserver.port=8080","/app/app.war", "--server.servlet.context-path=/"]
+CMD ["java","-Xms256m","-Xmx512m","-jar", "-Dserver.port=8080","/app/app.jar", "--server.servlet.context-path=/"]
