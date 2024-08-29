@@ -71,11 +71,14 @@ node('skopeo') {
     stage('Trivy Image Scan') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
+             withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                sh "echo ${DOCKER_PASSWORD} | podman login --username ${DOCKER_USERNAME} --password-stdin docker.io"
+            }
             // Run Trivy to scan the built image and export results to an HTML file
             sh """
                podman run --rm \
                --volume /var/run/podman/podman.sock:/var/run/podman/podman.sock \
-               aquasec/trivy:latest image --format template --template '@contrib/html.tpl' \
+               docker.io/aquasec/trivy:latest image --format template --template '@contrib/html.tpl' \
                --output ${trivyReportPath} --severity HIGH,CRITICAL \
                --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}
             """
