@@ -85,7 +85,7 @@ node('skopeo') {
             }
 
             // Run Trivy to scan the built image and export results to an HTML file
-            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure ${intRegistryDev}/${projectName}/${appName}:${tag}"
+            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
         }
     }
 
