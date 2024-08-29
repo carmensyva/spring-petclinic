@@ -21,7 +21,7 @@ node('skopeo') {
             sh "git fetch"
             sh "git switch ${branchName}" 
             withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                sh "mvn clean verify sonar:sonar -s source/settings.xml -Dsonar.token=${SONAR_TOKEN} -Dcheckstyle.skip"
+                sh "mvn clean verify sonar:sonar -s settings.xml -Dsonar.token=${SONAR_TOKEN} -Dcheckstyle.skip"
             }
         }
     }
