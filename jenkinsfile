@@ -26,8 +26,6 @@ node('skopeo') {
         }
     }
 
-    stage ('
-
     stage ('App Build') {
         dir("source") {
             sh "git fetch"
