@@ -78,8 +78,8 @@ node('skopeo') {
             sh "oc registry login --skip-check"
 
             // Run Trivy to scan the built image and export results to an HTML file
-            sh "podman run -v /run/podman/podman.sock:/run/podman/podman.sock docker.io/aquasec/trivy:0.54.1 image default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
-            // sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
+            // sh "podman run -v /run/podman/podman.sock:/run/podman/podman.sock docker.io/aquasec/trivy:0.54.1 image default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
+            sh "trivy image --format template --template '@contrib/html.tpl' --output ${trivyReportPath} --severity HIGH,CRITICAL --insecure default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
         }
     }
 
