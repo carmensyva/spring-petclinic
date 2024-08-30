@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: petclinic
-        image: image-registry.openshift-image-registry.svc:5000/spring/petclinic:01b1f388
+        image: image-registry.openshift-image-registry.svc:5000/spring/petclinic:db56b0c9
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
