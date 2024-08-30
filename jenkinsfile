@@ -72,17 +72,10 @@ node('skopeo') {
         dir("source") {
             tag = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
 
-            env.XDG_RUNTIME_DIR = '/tmp/run'
-            sh "mkdir -p /tmp/run"
+            // env.XDG_RUNTIME_DIR = '/tmp/run'
+            // sh "mkdir -p /tmp/run"
 
-            withCredentials([string(credentialsId: 'ocp-token', variable: 'OC_TOKEN')]) {
-                sh """
-                    # Authenticate with OpenShift
-                    oc login --token=$OC_TOKEN --server=${ocp} --insecure-skip-tls-verify
-                    # Log in to the OpenShift internal registry
-                    oc registry login --skip-check
-                """
-            }
+            sh "oc registry login --skip-check"
 
             // Run Trivy to scan the built image and export results to an HTML file
             sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ docker.io/aquasec/trivy:0.54.1 image default-route-openshift-image-registry.apps.dev.mibocp.co.id/${projectName}/${appName}:${tag}"
