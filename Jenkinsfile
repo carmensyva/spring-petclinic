@@ -60,11 +60,27 @@ pipeline {
 
         stage('App Build') {
             steps {
-                dir("source") {
-                    sh "git fetch"
-                    sh "git switch ${BRANCH_NAME}"
-                    withCredentials([usernamePassword(credentialsId: 'nexusid', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                        sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -DaltDeploymentRepository=nexus::default::${HOSTED_REPO_URL} -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"
+                script {
+                    def proceed = input(
+                        id: 'ProceedAppBuild', 
+                        message: 'Do you want to proceed with the App Build?', 
+                        parameters: [
+                            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Yes or No', name: 'Proceed']
+                        ]
+                    )
+
+                    if (proceed) {
+                        dir("source") {
+                            sh "git fetch"
+                            sh "git switch ${BRANCH_NAME}"
+                            withCredentials([usernamePassword(credentialsId: 'nexusid', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                                sh "mvn clean deploy -Dmaven.test.skip=true -s settings-nexus.xml -DaltDeploymentRepository=nexus::default::${env.HOSTED_REPO_URL} -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"
+                            }
+                        }
+                    }
+
+                    else {
+                        echo "App Build stage was skipped by the user."
                     }
                 }
             }
@@ -117,17 +133,32 @@ pipeline {
 
         stage('Push Image to Harbor') {
             steps {
-                dir("source") {
-                    script {
-                        env.XDG_RUNTIME_DIR = '/tmp/run'
-                        sh "mkdir -p /tmp/run"
-                        sh "oc registry login --skip-check"
+                script {
+                    def proceed = input(
+                        id: 'ProceedHarborPush', 
+                        message: 'Do you want to push the image to Harbor?', 
+                        parameters: [
+                            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Yes or No', name: 'Proceed']
+                        ]
+                    )
 
-                        withCredentials([usernamePassword(credentialsId: 'harborid', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG} docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:${GIT_TAG} --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
-                            sh "oc tag cicd/${APP_NAME}:latest ${PROJECT_NAME}/${APP_NAME}:latest"
-                            sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:latest docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:latest --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
+                    if (proceed) {
+                        dir("source") {
+                            script {
+                                env.XDG_RUNTIME_DIR = '/tmp/run'
+                                sh "mkdir -p /tmp/run"
+                                sh "oc registry login --skip-check"
+                                    
+                                withCredentials([usernamePassword(credentialsId: 'harborid', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG} docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:${GIT_TAG} --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
+                                    sh "oc tag cicd/${APP_NAME}:latest ${PROJECT_NAME}/${APP_NAME}:latest"
+                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:latest docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:latest --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
+                                }
+                            }
                         }
+                    }
+                    else {
+                        echo "Push Image to Harbor stage was skipped by the user."
                     }
                 }
             }
