@@ -23,8 +23,8 @@ pipeline {
         stage('Initialize') {
             steps {
                 script {
-                    env.GIT_TAG = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
-                    env.OC_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+                    GIT_TAG = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
+                    OC_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
                 }
             }
         }
