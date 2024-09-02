@@ -150,9 +150,9 @@ pipeline {
                                 sh "oc registry login --skip-check"
                                     
                                 withCredentials([usernamePassword(credentialsId: 'harborid', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG} docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:${GIT_TAG} --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
+                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG} docker://${EXT_REGISTRY_HARBOR}:80/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:${GIT_TAG} --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
                                     sh "oc tag cicd/${APP_NAME}:latest ${PROJECT_NAME}/${APP_NAME}:latest"
-                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:latest docker://${EXT_REGISTRY_HARBOR}/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:latest --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
+                                    sh "skopeo copy --remove-signatures --src-creds=jenkins:${OC_TOKEN} --src-tls-verify=false docker://${INT_REGISTRY_DEV}/${PROJECT_NAME}/${APP_NAME}:latest docker://${EXT_REGISTRY_HARBOR}:80/${LANGUAGE}/${PROJECT_NAME}_${APP_NAME}:latest --dest-creds ${USERNAME}:${PASSWORD} --dest-tls-verify=false"
                                 }
                             }
                         }
