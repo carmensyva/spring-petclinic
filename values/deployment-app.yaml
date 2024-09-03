@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: petclinic
-        image: harbor.dev.mibocp.co.id:80/java/spring_petclinic:8415b513
+        image: harbor.dev.mibocp.co.id:80/java/spring_petclinic:591d409d
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
