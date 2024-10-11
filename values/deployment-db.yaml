@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: petclinic-db
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: petclinic-db
