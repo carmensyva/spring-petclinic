@@ -110,7 +110,7 @@ pipeline {
                         sh "mkdir -p /tmp/run"
                         sh "oc registry login --skip-check"
                         def templatePath = "${env.WORKSPACE}/trivy-source/contrib/html.tpl"
-                        sh "trivy image --format template --template '@${templatePath}' --output ${TRIVY_REPORT_PATH} --insecure default-route-openshift-image-registry.apps.dev.mibocp.co.id/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG}"
+                        sh "trivy image --format template --template '@${templatePath}' --output ${TRIVY_REPORT_PATH} --insecure --cache-dir /var/lib/jenkins/trivy-cache default-route-openshift-image-registry.apps.dev.mibocp.co.id/${PROJECT_NAME}/${APP_NAME}:${GIT_TAG}"
                     }
                 }
             }
